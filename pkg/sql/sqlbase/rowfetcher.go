@@ -25,6 +25,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/keys"
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
 	"github.com/cockroachdb/cockroach/pkg/sql/parser"
+	"github.com/cockroachdb/cockroach/pkg/sql/result"
 	"github.com/cockroachdb/cockroach/pkg/util"
 	"github.com/cockroachdb/cockroach/pkg/util/encoding"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
@@ -585,6 +586,12 @@ func (rf *RowFetcher) NextRow(ctx context.Context, traceKV bool) (EncDatumRow, e
 			log.VEventf(ctx, 2, "fetched: %s -> %s", prettyKey, prettyVal)
 		}
 		rowDone, err := rf.NextKey(ctx)
+
+		for i := 0; i < len(rf.row); i++ {
+			//fmt.Println(encRow[i].encoding)
+			result.Length = result.Length + uint32(len(rf.row[i].encoded))
+		}
+
 		if err != nil {
 			return nil, err
 		}

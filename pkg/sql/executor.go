@@ -42,6 +42,7 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/distsqlrun"
 	"github.com/cockroachdb/cockroach/pkg/sql/jobs"
 	"github.com/cockroachdb/cockroach/pkg/sql/parser"
+	"github.com/cockroachdb/cockroach/pkg/sql/result"
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
 	"github.com/cockroachdb/cockroach/pkg/sql/sqlbase"
 	"github.com/cockroachdb/cockroach/pkg/util/duration"
@@ -2010,6 +2011,11 @@ func (e *Executor) execClassic(
 		rowResultWriter.IncrementRowsAffected(count)
 
 	case parser.Rows:
+		if(result.Length > 0) {
+			fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
+			result.Length = 0
+		}
+
 		err := forEachRow(params, plan, func(values parser.Datums) error {
 			for _, val := range values {
 				if err := checkResultType(val.ResolvedType()); err != nil {

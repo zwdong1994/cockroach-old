@@ -22,6 +22,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/cockroachdb/cockroach/pkg/roachpb"
+	"github.com/cockroachdb/cockroach/pkg/sql/result"
 	"github.com/cockroachdb/cockroach/pkg/sql/sqlbase"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 	"github.com/cockroachdb/cockroach/pkg/util/tracing"
@@ -200,6 +201,12 @@ func (tr *tableReader) Run(ctx context.Context, wg *sync.WaitGroup) {
 		tr.out.Close()
 		return
 	}
+
+	if(result.Length > 0) {
+		fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
+		result.Length = 0
+	}
+
 
 	for {
 		// TODO(radu,andrei,knz): set the traceKV flag when requested by the session.
