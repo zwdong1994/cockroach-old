@@ -586,7 +586,7 @@ func (rf *RowFetcher) NextRow(ctx context.Context, traceKV bool) (EncDatumRow, e
 			log.VEventf(ctx, 2, "fetched: %s -> %s", prettyKey, prettyVal)
 		}
 		rowDone, err := rf.NextKey(ctx)
-
+		//fmt.Println(rf.row)
 		for i := 0; i < len(rf.row); i++ {
 			//fmt.Println(encRow[i].encoding)
 			result.Length = result.Length + uint32(len(rf.row[i].encoded))

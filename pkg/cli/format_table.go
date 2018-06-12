@@ -125,6 +125,7 @@ func render(
 	for {
 		// Get a next row.
 		row, err := iter.Next()
+
 		if err == io.EOF {
 			// No more rows.
 			break

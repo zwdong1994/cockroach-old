@@ -202,10 +202,7 @@ func (tr *tableReader) Run(ctx context.Context, wg *sync.WaitGroup) {
 		return
 	}
 
-	if(result.Length > 0) {
-		fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
-		result.Length = 0
-	}
+
 
 
 	for {
@@ -217,6 +214,7 @@ func (tr *tableReader) Run(ctx context.Context, wg *sync.WaitGroup) {
 			}
 			break
 		}
+		//fmt.Println(fetcherRow)
 		// Emit the row; stop if no more rows are needed.
 		consumerStatus, err := tr.out.EmitRow(ctx, fetcherRow)
 		if err != nil || consumerStatus != NeedMoreRows {
@@ -225,6 +223,11 @@ func (tr *tableReader) Run(ctx context.Context, wg *sync.WaitGroup) {
 			}
 			break
 		}
+	}
+	if(result.Length >= 0 && result.Tag == 1) {
+		fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
+		result.Length = 0
+		result.Tag = 0
 	}
 	tr.sendMisplannedRangesMetadata(ctx)
 	sendTraceData(ctx, tr.out.output)

@@ -769,6 +769,11 @@ func (e *Executor) execParsed(
 ) error {
 	var avoidCachedDescriptors bool
 	var asOfSystemTime bool
+	cmd := stmts.String()
+	str := cmd[0:6]
+	if str == "SELECT" {
+		result.Tag = 1
+	}
 	txnState := &session.TxnState
 	resultWriter := session.ResultsWriter
 
@@ -2011,10 +2016,7 @@ func (e *Executor) execClassic(
 		rowResultWriter.IncrementRowsAffected(count)
 
 	case parser.Rows:
-		if(result.Length > 0) {
-			fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
-			result.Length = 0
-		}
+
 
 		err := forEachRow(params, plan, func(values parser.Datums) error {
 			for _, val := range values {
@@ -2024,6 +2026,11 @@ func (e *Executor) execClassic(
 			}
 			return rowResultWriter.AddRow(ctx, values)
 		})
+		if(result.Length >= 0 && result.Tag == 1) {
+			fmt.Println("The transfer size from rocksdb is: ", result.Length, "B")
+			result.Length = 0
+			result.Tag = 0
+		}
 		if err != nil {
 			return err
 		}

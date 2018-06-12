@@ -313,6 +313,7 @@ func (c *sqlConn) Query(query string, args []driver.Value) (*sqlRows, error) {
 		fmt.Fprintln(stderr, ">", query)
 	}
 	rows, err := c.conn.Query(query, args)
+	//fmt.Println(rows)
 	if err == driver.ErrBadConn {
 		c.reconnecting = true
 		c.Close()
