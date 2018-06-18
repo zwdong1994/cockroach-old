@@ -1,5 +1,5 @@
 package result
 
-var Length uint32
+var Length uint64
 
 var Tag uint8

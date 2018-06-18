@@ -589,7 +589,7 @@ func (rf *RowFetcher) NextRow(ctx context.Context, traceKV bool) (EncDatumRow, e
 		//fmt.Println(rf.row)
 		for i := 0; i < len(rf.row); i++ {
 			//fmt.Println(encRow[i].encoding)
-			result.Length = result.Length + uint32(len(rf.row[i].encoded))
+			result.Length = result.Length + uint64(len(rf.row[i].encoded))
 		}
 
 		if err != nil {
