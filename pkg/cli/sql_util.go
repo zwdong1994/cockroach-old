@@ -37,6 +37,8 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/sql/pgwire/pgerror"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 	"github.com/cockroachdb/cockroach/pkg/util/timeutil"
+	"os"
+
 )
 
 type sqlConnI interface {
@@ -514,6 +516,7 @@ var tagsWithRowsAffected = map[string]struct{}{
 func runQueryAndFormatResults(conn *sqlConn, w io.Writer, fn queryFunc) error {
 	startTime := timeutil.Now()
 	rows, err := fn(conn)
+
 	if err != nil {
 		return handleCopyError(conn, err)
 	}
@@ -575,14 +578,24 @@ func runQueryAndFormatResults(conn *sqlConn, w io.Writer, fn queryFunc) error {
 			return err
 		}
 
-		if cliCtx.showTimes {
+		//if cliCtx.showTimes {
+		{
 			// Present the time since the last result, or since the
 			// beginning of execution. Currently the execution engine makes
 			// all the work upfront so most of the time is accounted for by
 			// the 1st result; this is subject to change once CockroachDB
 			// evolves to stream results as statements are executed.
 			newNow := timeutil.Now()
+			f, _ := os.OpenFile("time.output", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+
+
 			fmt.Fprintf(w, "\nTime: %s\n\n", newNow.Sub(startTime))
+			output_str := newNow.Sub(startTime).String() + "\t\n"
+			f.WriteString(output_str)
+
+			f.Close()
+
+			//fmt.Println("My time: ", newNow.Sub(startTime))
 			startTime = newNow
 		}
 
